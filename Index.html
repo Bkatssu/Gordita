@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Para ti, mi amor</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Pinyon+Script&family=Josefin+Sans:wght@200;300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --deep-black: #050408;
+    --midnight: #0d0a14;
+    --deep-purple: #1a0a2e;
+    --purple-mid: #2d1354;
+    --purple-glow: #6b21a8;
+    --purple-light: #a855f7;
+    --purple-pale: #d8b4fe;
+    --gold: #c9a96e;
+    --cream: #faf7f2;
+    --text-soft: #e9d5ff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    background: var(--deep-black);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Fondo con estrellas y nebulosa */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 20%, rgba(107, 33, 168, 0.18) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 80% at 80% 80%, rgba(45, 19, 84, 0.25) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 50% 50%, rgba(26, 10, 46, 0.4) 0%, transparent 70%);
+    z-index: 0;
+  }
+
+  /* Partículas de estrellas */
+  .stars {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle var(--dur, 3s) ease-in-out infinite var(--delay, 0s);
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.1; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.3); }
+  }
+
+  /* Partículas flotantes */
+  .particles {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: var(--purple-light);
+    border-radius: 50%;
+    animation: float var(--dur, 8s) ease-in-out infinite var(--delay, 0s);
+    opacity: 0;
+  }
+
+  @keyframes float {
+    0% { opacity: 0; transform: translateY(100vh) translateX(0); }
+    10% { opacity: 0.6; }
+    90% { opacity: 0.3; }
+    100% { opacity: 0; transform: translateY(-10vh) translateX(calc(var(--drift, 30px))); }
+  }
+
+  /* Sobre */
+  .envelope-wrapper {
+    position: relative;
+    z-index: 10;
+    perspective: 1200px;
+  }
+
+  .envelope {
+    width: 340px;
+    height: 230px;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    filter: drop-shadow(0 0 40px rgba(168, 85, 247, 0.3));
+  }
+
+  .envelope:hover {
+    transform: translateY(-4px);
+    filter: drop-shadow(0 0 60px rgba(168, 85, 247, 0.5));
+  }
+
+  .envelope.open {
+    cursor: default;
+    animation: envelopeShake 0.4s ease;
+  }
+
+  @keyframes envelopeShake {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-2deg); }
+    75% { transform: rotate(2deg); }
+  }
+
+  /* Cuerpo del sobre */
+  .env-body {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(145deg, #1a0a2e, #2d1354, #1a0a2e);
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    border-radius: 4px;
+    position: absolute;
+    box-shadow:
+      inset 0 0 30px rgba(107, 33, 168, 0.2),
+      0 20px 60px rgba(0,0,0,0.5);
+  }
+
+  /* Líneas decorativas del sobre */
+  .env-body::before {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    border: 1px solid rgba(168, 85, 247, 0.15);
+    border-radius: 2px;
+  }
+
+  /* Triángulos del sobre */
+  .env-flap-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-left: 170px solid transparent;
+    border-right: 170px solid transparent;
+    border-bottom: 130px solid #220d40;
+    filter: brightness(0.8);
+    z-index: 2;
+  }
+
+  .env-flap-left {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+    border-top: 115px solid transparent;
+    border-bottom: 115px solid transparent;
+    border-left: 150px solid #1e0c38;
+    z-index: 1;
+  }
+
+  .env-flap-right {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+    border-top: 115px solid transparent;
+    border-bottom: 115px solid transparent;
+    border-right: 150px solid #1e0c38;
+    z-index: 1;
+  }
+
+  /* Solapa superior */
+  .env-flap-top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-left: 170px solid transparent;
+    border-right: 170px solid transparent;
+    border-top: 130px solid #2d1354;
+    z-index: 5;
+    transform-origin: top center;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .envelope-wrapper.open .env-flap-top {
+    transform: rotateX(180deg);
+  }
+
+  /* Sello decorativo */
+  .seal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 44px;
+    height: 44px;
+    z-index: 6;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .seal-circle {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #2d1354, #1a0a2e);
+    border: 2px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 15px rgba(201, 169, 110, 0.4);
+  }
+
+  .seal-heart {
+    color: var(--gold);
+    font-size: 18px;
+    line-height: 1;
+  }
+
+  .envelope-wrapper.open .seal {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+
+  /* Texto "click para abrir" */
+  .hint {
+    position: absolute;
+    bottom: -36px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(168, 85, 247, 0.6);
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .envelope-wrapper.open .hint { display: none; }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.9; }
+  }
+
+  /* Papel que sale */
+  .letter-paper {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%) translateY(0px);
+    bottom: 20px;
+    width: 300px;
+    z-index: 20;
+    transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s, opacity 0.5s ease 0.3s;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .envelope-wrapper.open .letter-paper {
+    transform: translateX(-50%) translateY(-280px);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .paper-inner {
+    background: linear-gradient(160deg, #faf7f2 0%, #f0e8ff 50%, #faf7f2 100%);
+    border-radius: 3px;
+    padding: 28px 24px 24px;
+    position: relative;
+    cursor: pointer;
+    box-shadow:
+      0 -4px 20px rgba(107, 33, 168, 0.2),
+      0 10px 40px rgba(0,0,0,0.4);
+    transition: transform 0.3s ease;
+  }
+
+  .paper-inner:hover {
+    transform: translateY(-3px);
+  }
+
+  /* Líneas del papel */
+  .paper-inner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+      transparent,
+      transparent 27px,
+      rgba(168, 85, 247, 0.08) 27px,
+      rgba(168, 85, 247, 0.08) 28px
+    );
+    border-radius: 3px;
+  }
+
+  .paper-title {
+    font-family: 'Pinyon Script', cursive;
+    font-size: 28px;
+    color: #6b21a8;
+    text-align: center;
+    margin-bottom: 6px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .paper-subtitle {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: rgba(107, 33, 168, 0.5);
+    text-align: center;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(107, 33, 168, 0.3), transparent);
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .open-letter-btn {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: #6b21a8;
+    text-transform: uppercase;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    animation: pulse 2s infinite;
+  }
+
+  /* Modal de carta completa */
+  .letter-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+    padding: 20px;
+  }
+
+  .letter-modal.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(5, 4, 8, 0.92);
+    backdrop-filter: blur(8px);
+  }
+
+  .letter-scroll {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 620px;
+    max-height: 88vh;
+    overflow-y: auto;
+    background: linear-gradient(155deg, #faf7f2 0%, #f3e8ff 40%, #fdf4ff 70%, #faf7f2 100%);
+    border-radius: 4px;
+    padding: 50px 44px 40px;
+    box-shadow:
+      0 0 0 1px rgba(168, 85, 247, 0.15),
+      0 0 60px rgba(107, 33, 168, 0.25),
+      0 40px 100px rgba(0,0,0,0.6);
+    transform: translateY(30px) scale(0.96);
+    transition: transform 0.5s cubic-bezier(0.34, 1.2, 0.64, 1);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(168, 85, 247, 0.3) transparent;
+  }
+
+  .letter-modal.visible .letter-scroll {
+    transform: translateY(0) scale(1);
+  }
+
+  .letter-scroll::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      transparent,
+      transparent 31px,
+      rgba(168, 85, 247, 0.06) 31px,
+      rgba(168, 85, 247, 0.06) 32px
+    );
+    border-radius: 4px;
+    pointer-events: none;
+  }
+
+  .letter-scroll::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 52px;
+    bottom: 0;
+    width: 1px;
+    background: rgba(201, 169, 110, 0.2);
+    pointer-events: none;
+  }
+
+  .letter-header {
+    text-align: center;
+    margin-bottom: 30px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .letter-ornament {
+    font-size: 22px;
+    color: var(--gold);
+    opacity: 0.7;
+    display: block;
+    margin-bottom: 8px;
+    letter-spacing: 8px;
+  }
+
+  .letter-title {
+    font-family: 'Pinyon Script', cursive;
+    font-size: 52px;
+    color: #4a0e8f;
+    line-height: 1;
+  }
+
+  .letter-date {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: rgba(107, 33, 168, 0.45);
+    text-transform: uppercase;
+    margin-top: 6px;
+  }
+
+  .letter-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(201, 169, 110, 0.4), transparent);
+    margin: 0 0 28px;
+  }
+
+  .letter-body {
+    position: relative;
+    z-index: 1;
+  }
+
+  .letter-body p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16.5px;
+    line-height: 1.95;
+    color: #1a0a2e;
+    margin-bottom: 20px;
+    font-weight: 300;
+    text-align: justify;
+  }
+
+  .letter-body p:first-child::first-letter {
+    font-family: 'Pinyon Script', cursive;
+    font-size: 52px;
+    float: left;
+    line-height: 0.8;
+    margin: 4px 6px 0 0;
+    color: #6b21a8;
+  }
+
+  .letter-signature {
+    text-align: right;
+    margin-top: 28px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .letter-signature p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    color: #4a0e8f;
+    font-style: italic;
+    margin-bottom: 4px;
+  }
+
+  .signature-name {
+    font-family: 'Pinyon Script', cursive;
+    font-size: 36px;
+    color: #6b21a8;
+    display: block;
+  }
+
+  /* Botones */
+  .letter-actions {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    margin-top: 36px;
+    position: relative;
+    z-index: 1;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 14px 28px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+  }
+
+  .btn-close {
+    background: transparent;
+    color: #6b21a8;
+    border: 1px solid rgba(107, 33, 168, 0.4);
+  }
+
+  .btn-close:hover {
+    background: rgba(107, 33, 168, 0.08);
+    border-color: rgba(107, 33, 168, 0.7);
+    transform: translateY(-2px);
+  }
+
+  .btn-music {
+    background: linear-gradient(135deg, #6b21a8, #4a0e8f);
+    color: #e9d5ff;
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    box-shadow: 0 4px 20px rgba(107, 33, 168, 0.4);
+  }
+
+  .btn-music:hover {
+    background: linear-gradient(135deg, #7c3aed, #6b21a8);
+    box-shadow: 0 6px 30px rgba(107, 33, 168, 0.6);
+    transform: translateY(-2px);
+  }
+
+  /* Nota musical flotante */
+  .music-note {
+    display: inline-block;
+    animation: noteFloat 0.6s ease-in-out infinite alternate;
+  }
+
+  @keyframes noteFloat {
+    from { transform: translateY(0); }
+    to { transform: translateY(-2px); }
+  }
+
+  /* Scrollbar */
+  .letter-scroll::-webkit-scrollbar { width: 4px; }
+  .letter-scroll::-webkit-scrollbar-track { background: transparent; }
+  .letter-scroll::-webkit-scrollbar-thumb { background: rgba(168, 85, 247, 0.3); border-radius: 2px; }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    .envelope { width: 290px; height: 196px; }
+    .env-flap-bottom { border-left-width: 145px; border-right-width: 145px; border-bottom-width: 110px; }
+    .env-flap-left { border-top-width: 98px; border-bottom-width: 98px; border-left-width: 128px; }
+    .env-flap-right { border-top-width: 98px; border-bottom-width: 98px; border-right-width: 128px; }
+    .env-flap-top { border-left-width: 145px; border-right-width: 145px; border-top-width: 110px; }
+    .letter-paper { width: 260px; }
+    .letter-scroll { padding: 36px 24px 28px; }
+    .letter-title { font-size: 40px; }
+    .letter-body p { font-size: 15px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+<div class="particles" id="particles"></div>
+
+<div class="envelope-wrapper">
+  <div class="envelope" id="envelope" onclick="openEnvelope()">
+    <div class="env-body"></div>
+    <div class="env-flap-left"></div>
+    <div class="env-flap-right"></div>
+    <div class="env-flap-bottom"></div>
+    <div class="env-flap-top"></div>
+    <div class="seal">
+      <div class="seal-circle">
+        <span class="seal-heart">♥</span>
+      </div>
+    </div>
+
+    <!-- Papel que asoma -->
+  </div>
+  <div class="letter-paper" id="letterPaper" onclick="openModal(event)">
+      <div class="paper-inner">
+        <div class="paper-title">Para ti</div>
+        <div class="paper-subtitle">Con todo mi amor</div>
+        <div class="divider"></div>
+        <div class="open-letter-btn">✦ Toca para leer ✦</div>
+      </div>
+    </div>
+  <div class="hint">✦ Toca para abrir ✦</div>
+</div>
+
+<!-- Modal carta completa -->
+<div class="letter-modal" id="letterModal">
+  <div class="modal-backdrop"></div>
+  <div class="letter-scroll">
+    <div class="letter-header">
+      <span class="letter-ornament">✦ ✦ ✦</span>
+      <div class="letter-title">Mi amor</div>
+      <div class="letter-date">Para ella, siempre</div>
+    </div>
+    <div class="letter-divider"></div>
+    <div class="letter-body">
+      <p>Amor, sé que todo lo que estás viviendo con tus papás y con la u no es nada fácil, sé que a veces sientes que la presión es demasiada y que tu cabeza no descansa, pero quiero que leas esto con calma y sientas cada palabra, porque todo lo que te digo es de corazón.</p>
+      <p>Primero quiero que recuerdes quién eres, no eres cualquier persona, eres una mujer fuerte, inteligente, capaz y valiente, has llegado hasta donde estás por tu esfuerzo, por tus desvelos, por tu dedicación, la universidad no es sencilla, exige mucho, cansa, abruma, pero tú tienes todo para salir adelante, yo he visto lo pilas que eres, la manera en que te esfuerzas incluso cuando no tienes ganas, la forma en que sigues intentando aunque estés agotada, y eso no lo hace cualquiera.</p>
+      <p>Con lo de tus papás, entiendo que duele cuando sientes que no te comprenden o cuando la presión viene de casa, a veces uno quisiera que todo fuera más ligero, más tranquilo, pero quiero que sepas algo, lo que estás viviendo ahora no define tu futuro, es solo una etapa, y las etapas pasan, algún día mirarás atrás y te darás cuenta de que todo esto te hizo más fuerte, más madura y más segura de ti misma.</p>
+      <p>Si algún día sientes que ya no puedes más, no te lo guardes, no cargues sola con todo, yo estoy aquí para ti, no solo para los momentos bonitos, sino también para los días grises, estoy para escucharte sin juzgarte, para abrazarte fuerte cuando el mundo pese demasiado, para recordarte tus metas cuando el cansancio te haga dudar, si tú te sientes débil, yo te sostengo, si tú dudas, yo creo por los dos.</p>
+      <p>Quiero que confíes en que todo va a estar bien, tal vez ahora todo se siente desordenado, pero las cosas poco a poco se acomodan, la vida no siempre es suave, pero tú tienes la fuerza suficiente para atravesar cualquier tormenta, y no estás sola en esa tormenta, yo camino contigo.</p>
+      <p>Me encanta la persona que eres, tu corazón tan noble, tu manera de sentir tan profundo, tu forma de luchar por lo que quieres, estoy orgulloso de ti incluso en tus días más difíciles, porque seguir levantándote cuando todo pesa ya es una victoria.</p>
+      <p>Recuerda esto siempre, eres suficiente, eres capaz, eres fuerte y tienes un futuro enorme por delante, y pase lo que pase con la u, con tus papás o con cualquier problema, yo estoy aquí, firme contigo, apoyándote, creyendo en ti y amándote cada día más.</p>
+    </div>
+    <div class="letter-signature">
+      <p>Con todo mi corazón,</p>
+      <span class="signature-name">Te amo, mi novia preciosa</span>
+    </div>
+    <div class="letter-actions">
+      <button class="btn btn-close" onclick="closeModal()">
+        ✕ Cerrar carta
+      </button>
+      <a class="btn btn-music" href="https://open.spotify.com/intl-es/track/0bK3jxkbq5cDKWr68KtO8G?si=5422fb5a25b74c57" target="_blank">
+        <span class="music-note">♪</span> Escuchar canción
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Generar estrellas
+  const starsContainer = document.getElementById('stars');
+  for (let i = 0; i < 120; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    const size = Math.random() * 2.5 + 0.5;
+    star.style.cssText = `
+      width: ${size}px;
+      height: ${size}px;
+      top: ${Math.random() * 100}%;
+      left: ${Math.random() * 100}%;
+      --dur: ${Math.random() * 3 + 2}s;
+      --delay: ${Math.random() * 4}s;
+    `;
+    starsContainer.appendChild(star);
+  }
+
+  // Generar partículas flotantes
+  const particlesContainer = document.getElementById('particles');
+  for (let i = 0; i < 25; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.cssText = `
+      left: ${Math.random() * 100}%;
+      --dur: ${Math.random() * 8 + 6}s;
+      --delay: ${Math.random() * 8}s;
+      --drift: ${(Math.random() - 0.5) * 80}px;
+      width: ${Math.random() * 3 + 1}px;
+      height: ${Math.random() * 3 + 1}px;
+    `;
+    particlesContainer.appendChild(p);
+  }
+
+  let envelopeOpened = false;
+
+  function openEnvelope() {
+    if (envelopeOpened) return;
+    envelopeOpened = true;
+    const wrapper = document.getElementById('envelope').parentElement;
+    const env = document.getElementById('envelope');
+    wrapper.classList.add('open');
+    env.classList.add('open');
+    env.onclick = null;
+  }
+
+  function openModal(e) {
+    e.stopPropagation();
+    const modal = document.getElementById('letterModal');
+    modal.classList.add('visible');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    const modal = document.getElementById('letterModal');
+    modal.classList.remove('visible');
+    document.body.style.overflow = '';
+    // Reiniciar el sobre
+    envelopeOpened = false;
+    const wrapper = document.getElementById('envelope').parentElement;
+    const env = document.getElementById('envelope');
+    wrapper.classList.remove('open');
+    env.classList.remove('open');
+    env.onclick = openEnvelope;
+  }
+
+  document.querySelector('.modal-backdrop').addEventListener('click', closeModal);
+</script>
+</body>
+</html>
